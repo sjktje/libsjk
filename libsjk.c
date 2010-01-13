@@ -104,6 +104,50 @@ catargv(int argc, char *argv[])
     return string;
 }
 
+char *
+catstdin(void)
+{
+    char *string = NULL;
+    char *line = NULL;
+    char *tmpline = NULL;
+    size_t len;
+    int stringlen = 0;
+
+    while ((line = fgetln(stdin, &len))) {
+        if (line[len - 1] == '\n')
+            line[len - 1] = '\0';
+        else {
+            if ((tmpline = malloc(len + 1)) == NULL) {
+                perror("catstdin() could not malloc");
+                exit(1);
+            }
+            memcpy(tmpline, line, len);
+            tmpline[len] = '\0';
+            line = tmpline;
+        }
+
+        stringlen += strlen(line)+2;
+
+        if (string == NULL) {
+            if ((string = malloc(stringlen)) == NULL) {
+                perror("catstdin() could not malloc");
+                exit(1);
+            } 
+        } else {
+            if ((string = realloc(string, len)) == NULL) {
+                perror("catstdin() could not realloc");
+                exit(1);
+            }
+        }
+
+        strncat(string, line, stringlen);
+        strncat(string, " ", stringlen);
+    }
+
+    return string;
+}
+
+
 /*
  * Returns string YYYY-MM-DD HH:SS UTC(+/-)HH.
  */
@@ -204,7 +248,7 @@ pfctldel(char *ips, char *table)
         exit(1);
     }
 
-    strncat(cmd, ips, cmdlength);
+    strncat(cmd, ips, len);
 
     system(cmd);
 
