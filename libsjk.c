@@ -16,6 +16,22 @@ isroot(void)
     return (uid == 0) ? 1 : 0;
 }
 
+/*
+ * Returns username of executing user
+ */
+char
+*myuser(void)
+{
+    struct passwd *passwd;
+    passwd = getpwuid(getuid());
+    return passwd->pw_name;
+}
+
+
+/* 
+ * Prints message and listens for answer. If defvalue is not NULL it will be 
+ * shown in [brackets] and used as default value.
+ */
 char
 *getinput(const char *message, char *defvalue)
 {
@@ -26,7 +42,7 @@ char
     char *p = NULL;
 
     if ((line = malloc(MAXBUF+1)) == NULL) {
-        fprintf(stderr, "Could not allocate memory!\n"); /* use perror() */
+        perror("getinput() could not malloc");
         exit(1);
     }
 
@@ -56,7 +72,7 @@ char
 }
 
 /*
- * Creates string consisting of all entries in *argv[].
+ * Creates string consisting of all entries in *argv[]
  */
 char *
 catargv(int argc, char *argv[])
@@ -68,13 +84,20 @@ catargv(int argc, char *argv[])
     for (i = 0; i < argc; i++) {
         length += strlen(argv[i])+1;
 
-        if (string == NULL)
-            ips = malloc(length);
-        else
-            ips = realloc(string, length);
+        if (string == NULL) {
+            if ((string = malloc(length)) == NULL) {
+                perror("catargv() could not malloc");
+                exit(1);
+            }
+        } else {
+            if ((string = realloc(string, length)) == NULL) {
+                perror("catargv() could not realloc");
+                exit(1);
+            }
+        }
 
         strncat(string, argv[i], length);
-        strncat(ips, " ", length);
+        strncat(string, " ", length);
     }
 
     return string;
