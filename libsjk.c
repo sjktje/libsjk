@@ -130,3 +130,84 @@ char
 
     return our_date;
 }
+
+/* 
+ * Adds *ips to OpenBSD packet filter table *table
+ */
+void 
+pfctladd(char *ips, char *table)
+{
+    int      len = 0;
+    char    *cmd = NULL;
+
+    asprintf(&cmd, "%spfctl -t %s -T add ",
+            isroot() ? "" : "sudo ", table);
+
+    len = strlen(cmd) + strlen(ips) + 1;
+
+    if ((cmd = realloc(cmd, len)) == NULL) {
+        perror("pfctladd() could not realloc");
+        exit(1);
+    }
+
+    strncat(cmd, ips, len);
+
+    system(cmd);
+
+    free(cmd);
+    cmd = NULL;
+}
+
+/*
+ * Seperates string *ips by whitespace and issues pfctl -k on all arguments.
+ * Uses sudo if user is not root.
+ */
+void 
+pfctlkill(char *ips)
+{
+    char    *ip = NULL;
+    char    *cmd = NULL;
+    int      len = 0;
+
+    while((ip = strsep(&ips, " ")) != NULL) {
+        if (ip[0] == '\0')
+            continue;
+
+        asprintf(&cmd, "%spfctl -k ", isroot() ? "" : "sudo ");
+        len = strlen(cmd) + strlen(ip) + 1;
+
+        if ((cmd = realloc(cmd, len)) == NULL) {
+            perror("pfctlkill could not realloc");
+            exit(1);
+        }
+
+        strncat(cmd, ip, len);
+
+        system(cmd);
+    }
+}
+
+/*
+ * Tries to remove *ips from PF table *table. Uses sudo if user is not root.
+ */
+void 
+pfctldel(char *ips, char *table)
+{
+    int len = 0;
+    char *cmd = NULL;
+
+    asprintf(&cmd, "%spfctl -t %s -T del ", isroot() ? "" : "sudo ", table);
+    len = strlen(cmd) + strlen(ips) + 1;
+
+    if ((cmd = realloc(cmd, len)) == NULL) {
+        perror("pfctldel() could not realloc");
+        exit(1);
+    }
+
+    strncat(cmd, ips, cmdlength);
+
+    system(cmd);
+
+    free(cmd);
+    cmd = NULL;
+}
