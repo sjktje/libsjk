@@ -102,3 +102,30 @@ catargv(int argc, char *argv[])
 
     return string;
 }
+
+/*
+ * Returns string YYYY-MM-DD HH:SS UTC(+/-)HH.
+ */
+char
+*mkdate(void)
+{
+    struct tm *tm_ptr;
+    time_t the_time;
+    char buf[256];
+    char *our_date;
+
+    (void)time(&the_time);
+    tm_ptr = gmtime(&the_time);
+
+    strftime(buf, sizeof(buf), "%y-%m-%d %H:%M UTC%z", tm_ptr);
+
+    our_date = malloc(strlen(buf) + 1);
+    if (our_date == NULL) {
+        perror("mkdate() could not malloc");
+        exit(1);
+    }
+
+    strcpy(our_date, buf);
+
+    return our_date;
+}
