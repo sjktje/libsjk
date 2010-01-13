@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -255,3 +256,22 @@ pfctldel(char *ips, char *table)
     free(cmd);
     cmd = NULL;
 }
+
+char *
+strtolc(char *string)
+{
+    int      len = strlen(string);  /* Length of CAPS string */
+    char    *lc = NULL;             /* Will contain lowercase string */
+    int i;
+
+    if ((lc = malloc(len + 1)) == NULL) {
+        perror("Could not malloc");
+        exit(1);
+    }
+
+    for(i = 0; i < len; i++)
+        lc[i] = tolower((int)string[i]);
+
+    return lc;
+}
+

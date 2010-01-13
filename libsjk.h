@@ -10,4 +10,4 @@ char    *mkdate(void);
 void     pfctladd(char *, char *);
 void     pfctlkill(char *);
 void     pfctldel(char *, char *);
-
+char    *strtolc(char *string);
