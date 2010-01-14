@@ -90,6 +90,20 @@ char
 }
 
 /*
+ * Uses getinput() to pose a yes/no question and expects a y/n answer.
+ * If def is true default answer is y, else n.
+ */
+int
+getyesno(const char *message, int def)
+{
+    char *answer = getinput(message, (def == 1) ? "y" : "n");
+    if ((answer[0] == 'y' || answer[0] == 'Y') && answer[1] == '\0')
+        return 1;
+    else
+        return 0;
+}
+
+/*
  * Creates string consisting of all entries in *argv[]
  */
 char *
