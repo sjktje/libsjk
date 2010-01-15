@@ -14,13 +14,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <unistd.h>
 #include <ctype.h>
 #include <pwd.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <unistd.h>
 
 #include "libsjk.h"
 
@@ -351,4 +352,17 @@ mkstar(char *string)
 
     return starred;
 }
-    
+
+void 
+perrorf(const char *fmt, ...)
+{
+    char *string = NULL;
+    va_list va;
+
+    va_start(va, fmt);
+    vasprintf(&string, fmt, va);
+    va_end(va);
+
+    perror(string);
+    free(string);
+}
