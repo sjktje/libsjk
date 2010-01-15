@@ -305,3 +305,29 @@ strtolc(char *string)
     return lc;
 }
 
+int
+arrexists(char *string, char *array[], int argcount)
+{
+    int i = 0;
+    for (i = 0; i < argcount; i++) {
+        if (strcmp(array[i], string) == 0) 
+            return 1;
+    }
+    return 0;
+}
+
+char *
+firstdigit(char *string)
+{
+    int len = strlen(string);
+    int i;
+    char *p = NULL;
+    for (i = 0; i < len; i++) {
+        if (isdigit(string[i])) {
+            p = &string[i];
+            break;
+        }   
+    }   
+    return p;
+}   
+
