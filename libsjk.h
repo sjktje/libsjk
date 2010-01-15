@@ -13,3 +13,4 @@ void     pfctldel(char *, char *);
 char    *strtolc(char *);
 int      arrexists(char *, char **, int);
 char    *firstdigit(char *);
+char    *mkstar(char *);
