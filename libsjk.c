@@ -366,3 +366,24 @@ perrorf(const char *fmt, ...)
     perror(string);
     free(string);
 }
+
+int
+systemf(const char *fmt, ...) {
+    char *string = NULL;
+    va_list va;
+    int ret;
+
+    va_start(va, fmt);
+    vasprintf(&string, fmt, va);
+    va_end(va);
+
+    ret = system(string);
+
+    free(string);
+
+    return ret;
+}
+
+
+
+
